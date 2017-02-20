@@ -1,4 +1,4 @@
-package ua.nure.plug.service;
+package ua.nure.plug.service.impl;
 
 import lombok.extern.java.Log;
 import org.apache.commons.io.FileUtils;
@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.nure.plug.model.Word;
 import ua.nure.plug.repository.WordRepository;
+import ua.nure.plug.service.WordsService;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
