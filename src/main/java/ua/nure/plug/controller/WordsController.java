@@ -26,8 +26,8 @@ public class WordsController {
     }
 
     @GetMapping
-    public String getNoun(@RequestParam String word) {
-        return wordsService.getNoun(word);
+    public String getNoun(@RequestParam String word, @RequestParam String lang) {
+        return wordsService.getNoun(word, lang);
     }
 
 }

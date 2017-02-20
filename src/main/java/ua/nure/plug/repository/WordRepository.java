@@ -7,7 +7,7 @@ import ua.nure.plug.model.Word;
 
 public interface WordRepository extends MongoRepository<Word, ObjectId> {
 
-    @Query(value = "{'forms': ?0}")
-    Word findNoun(String wordForm);
+    @Query(value = "{'forms' : ?0, 'lang' : ?1}")
+    Word findNoun(String wordForm, String lang);
 
 }

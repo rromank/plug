@@ -4,6 +4,6 @@ public interface WordsService {
 
     void loadWords(String filePath, String lang);
     void deleteAll();
-    String getNoun(String word);
+    String getNoun(String word, String lang);
 
 }

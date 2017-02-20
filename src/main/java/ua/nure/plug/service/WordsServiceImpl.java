@@ -43,8 +43,8 @@ public class WordsServiceImpl implements WordsService {
     }
 
     @Override
-    public String getNoun(String word) {
-        Word founded = wordRepository.findNoun(word);
+    public String getNoun(String word, String lang) {
+        Word founded = wordRepository.findNoun(word, lang);
         return founded != null ? founded.getNoun() : word;
     }
 
