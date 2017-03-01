@@ -1,9 +1,9 @@
 package ua.nure.plug.service;
 
-import ua.nure.plug.model.Document;
+import ua.nure.plug.model.WordDocument;
 
 public interface DocumentExtractor {
 
-    Document extract(String fileName);
+    WordDocument extract(String fileName);
 
 }

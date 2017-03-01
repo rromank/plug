@@ -3,7 +3,6 @@ package ua.nure.plug.model;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,9 +10,9 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class Document {
+public class WordDocument {
 
-    private ObjectId objectId;
+    private String objectId;
     private String fullText;
     private List<String> words = new ArrayList<>();
     private List<String> nouns = new ArrayList<>();

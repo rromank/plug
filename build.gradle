@@ -29,11 +29,19 @@ repositories {
 }
 
 dependencies {
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-mongodb', version: '1.5.0.RELEASE'
+
+    // https://mvnrepository.com/artifact/org.sonarsource.scanner.maven/sonar-maven-plugin
+    compile group: 'org.sonarsource.scanner.maven', name: 'sonar-maven-plugin', version: '3.2'
+
+
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-elasticsearch', version: '1.5.1.RELEASE'
+//    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-mongodb', version: '1.5.0.RELEASE'
     compile "org.projectlombok:lombok:1.16.14"
     compile group: 'commons-io', name: 'commons-io', version: '2.5'
     compile group: 'org.apache.poi', name: 'poi-ooxml', version: '3.9'
 
+
+    runtime "net.java.dev.jna:jna"
 
     // tag::jetty[]
     compile("org.springframework.boot:spring-boot-starter-web") {

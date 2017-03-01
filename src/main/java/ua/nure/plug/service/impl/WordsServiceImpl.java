@@ -5,7 +5,7 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.nure.plug.model.Word;
-import ua.nure.plug.repository.WordRepository;
+import ua.nure.plug.repository.elastic.WordRepositoryElastic;
 import ua.nure.plug.service.WordsService;
 
 import java.io.IOException;
@@ -19,7 +19,7 @@ import java.util.logging.Level;
 public class WordsServiceImpl implements WordsService {
 
     @Autowired
-    private WordRepository wordRepository;
+    private WordRepositoryElastic wordRepository;
 
     @Override
     public void loadWords(String filePath, String lang) {
@@ -45,8 +45,8 @@ public class WordsServiceImpl implements WordsService {
 
     @Override
     public String getNoun(String word, String lang) {
-        Word founded = wordRepository.findNoun(word, lang);
-        return founded != null ? founded.getNoun() : word;
+        List<Word> words = wordRepository.findOneByForms(word);
+        return words.size() > 0 ? words.get(0).getNoun() : word;
     }
 
     @Override

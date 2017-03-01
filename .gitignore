@@ -3,6 +3,7 @@
 gradlew
 gradlew.bat
 
+data/
 
 ### IntelliJ IDEA ###
 .idea
