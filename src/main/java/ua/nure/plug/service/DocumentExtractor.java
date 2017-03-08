@@ -1,9 +1,9 @@
 package ua.nure.plug.service;
 
-import ua.nure.plug.model.WordDocument;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface DocumentExtractor {
 
-    WordDocument extract(String fileName);
+    String extractText(MultipartFile file);
 
 }

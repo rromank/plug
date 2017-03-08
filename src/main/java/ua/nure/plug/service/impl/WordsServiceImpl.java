@@ -23,24 +23,24 @@ public class WordsServiceImpl implements WordsService {
 
     @Override
     public void loadWords(String filePath, String lang) {
-        List<Word> words = new ArrayList<>();
-        try {
-            Word word = new Word(lang);
-            for (String line : FileUtils.readLines(FileUtils.getFile(filePath), Charset.forName("utf-8"))) {
-                if (!line.startsWith("  ")) {
-                    word = new Word(lang);
-                    words.add(word);
-                    String noun = getWord(line);
-                    word.setNoun(noun);
-                    word.addForm(noun);
-                } else {
-                    word.addForm(getWord(line));
-                }
-            }
-        } catch (IOException e) {
-            log.log(Level.WARNING, e.getMessage());
-        }
-        wordRepository.save(words);
+//        List<Word> words = new ArrayList<>();
+//        try {
+//            Word word = new Word(lang);
+//            for (String line : FileUtils.readLines(FileUtils.getFile(filePath), Charset.forName("utf-8"))) {
+//                if (!line.startsWith("  ")) {
+//                    word = new Word(lang);
+//                    words.add(word);
+//                    String noun = getWord(line);
+//                    word.setNoun(noun);
+//                    word.addForm(noun);
+//                } else {
+//                    word.addForm(getWord(line));
+//                }
+//            }
+//        } catch (IOException e) {
+//            log.log(Level.WARNING, e.getMessage());
+//        }
+//        wordRepository.save(words);
     }
 
     @Override
