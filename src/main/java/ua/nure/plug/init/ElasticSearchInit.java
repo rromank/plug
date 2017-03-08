@@ -53,6 +53,7 @@ public class ElasticSearchInit {
         if (zipFileName != null && (scanner = getScanner(zipFileName)) != null) {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
+//                System.out.println(line);
                 if (!line.startsWith("  ")) {
                     word = new Word(lang);
                     words.add(word);
@@ -76,7 +77,7 @@ public class ElasticSearchInit {
         try {
             ZipFile zipFile = new ZipFile(getFile(zipFileName));
             ZipArchiveEntry entry = zipFile.getEntries().nextElement();
-            return new Scanner(zipFile.getInputStream(entry));
+            return new Scanner(zipFile.getInputStream(entry), "UTF-8");
         } catch (IOException e) {
             log.error("Can't unzip dictionary.");
         }
