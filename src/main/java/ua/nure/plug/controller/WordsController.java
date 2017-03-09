@@ -15,16 +15,6 @@ public class WordsController {
     @Autowired
     private WordsService wordsService;
 
-    @GetMapping("/load")
-    public void loadWords(@RequestParam String file, @RequestParam String lang) {
-        wordsService.loadWords(file, lang);
-    }
-
-    @DeleteMapping("/all")
-    public void deleteAll() {
-        wordsService.deleteAll();
-    }
-
     @GetMapping
     public String getNoun(@RequestParam String word, @RequestParam String lang) {
         return wordsService.getNoun(word, lang);

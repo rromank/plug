@@ -17,5 +17,11 @@
     </form>
 </div>
 
+<div th:if="${lang}">
+    <h2>Text language:
+        <span th:text="${lang}"/>
+    </h2>
+</div>
+
 </body>
 </html>

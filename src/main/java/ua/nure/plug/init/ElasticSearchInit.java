@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ua.nure.plug.model.Word;
-import ua.nure.plug.repository.elastic.WordRepositoryElastic;
+import ua.nure.plug.repository.elastic.WordRepository;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
@@ -30,7 +30,7 @@ public class ElasticSearchInit {
     private String dictionaryZipFileUa;
 
     @Autowired
-    private WordRepositoryElastic wordRepository;
+    private WordRepository wordRepository;
 
     @PostConstruct
     public void initDictionaries() {
@@ -53,7 +53,6 @@ public class ElasticSearchInit {
         if (zipFileName != null && (scanner = getScanner(zipFileName)) != null) {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
-//                System.out.println(line);
                 if (!line.startsWith("  ")) {
                     word = new Word(lang);
                     words.add(word);
