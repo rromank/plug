@@ -27,7 +27,7 @@ public class LanguageIdentifierImpl implements LanguageIdentifier {
         List<String> words = textTokenizer.tokenize(text);
         Map<String, Integer> langs = new HashMap<>();
         for (int i = 0; i < identificationCount && words.size() > i; i++) {
-            String lang = getLang(words.get(0));
+            String lang = getLang(words.get(i));
             if (lang != null) {
                 if (!langs.containsKey(lang)) {
                     langs.put(lang, 1);
@@ -36,10 +36,18 @@ public class LanguageIdentifierImpl implements LanguageIdentifier {
                 }
             }
         }
-        return langs.entrySet().stream()
-                .max((entry1, entry2) -> entry1.getValue() > entry2.getValue() ? 1 : -1)
-                .get()
-                .getKey();
+
+        System.out.println(langs);
+
+        String lang = "";
+        int max = 0;
+        for (Map.Entry<String, Integer> entry : langs.entrySet()) {
+            if (entry.getValue() >= max) {
+                max = entry.getValue();
+                lang = entry.getKey();
+            }
+        }
+        return lang;
     }
 
     private String getLang(String word) {
