@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 @Component
 public class TextTokenizerImpl implements TextTokenizer {
 
-    private Pattern pattern = Pattern.compile("[а-яА-Яёєїі]{3,}");
+    private Pattern pattern = Pattern.compile("[а-яА-Яёєїі]{3}\'*[а-яА-Яёєїі]{3,}");
 
     @Override
     public List<String> tokenize(String text) {

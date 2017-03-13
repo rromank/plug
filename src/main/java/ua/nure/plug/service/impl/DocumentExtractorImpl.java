@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 @Component
 public class DocumentExtractorImpl implements DocumentExtractor {
 
-    private Pattern pattern = Pattern.compile("[а-яА-Яёєїі]{3,}");
+    private Pattern pattern = Pattern.compile("[а-яА-Яёєїі\']{3,}");
 
     @Override
     public String extractText(MultipartFile file) {
