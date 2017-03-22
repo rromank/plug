@@ -17,10 +17,10 @@
     </form>
 </div>
 
-<div th:if="${lang}">
-    <h2>Text language:
-        <span th:text="${lang}"/>
-    </h2>
+<div th:if="${shingles}">
+    <div th:each="shingle : ${shingles}">
+        <span th:text="${shingle}"></span>
+    </div>
 </div>
 
 </body>
