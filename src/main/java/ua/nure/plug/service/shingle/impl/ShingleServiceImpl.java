@@ -2,6 +2,7 @@ package ua.nure.plug.service.shingle.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ua.nure.plug.model.Document;
 import ua.nure.plug.model.Shingle;
 import ua.nure.plug.service.HashService;
 import ua.nure.plug.service.shingle.ShingleService;
@@ -32,6 +33,16 @@ public class ShingleServiceImpl implements ShingleService {
             shingles.add(shingle);
         }
         return shingles;
+    }
+
+    @Override
+    public int similar(Document document1, Document document2) {
+        List<Shingle> intersection = new ArrayList<>(document1.getShingles());
+        List<Shingle> shingles2 = document2.getShingles();
+
+        intersection.retainAll(shingles2);
+
+        return (intersection.size() / document1.getWords().size()) * 100;
     }
 
 }

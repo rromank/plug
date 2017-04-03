@@ -1,0 +1,35 @@
+@startuml
+
+class Document {
+    Date created
+    List<String> word
+    List<Hash> shingleHashes
+}
+
+interface TextExtractor {
+    String extract()
+}
+interface Tokenizer {
+    List<String> tokenize(text)
+}
+
+abstract class DocumentComparator {
+    abstract compare(document1, document2)
+}
+
+interface ShingleGenerator {
+    List<String> generate(List<String> words)
+}
+
+interface DocumentService {
+
+}
+
+TextExtractor <|-- DocExtractor
+TextExtractor <|-- DocxExtractor
+
+Tokenizer <|-- WordTokenizer
+DocumentComparator <|-- ShingleComparator
+
+
+@enduml

@@ -1,0 +1,5 @@
+upload doc, docx document
+extract text
+normalize
+generate shingles
+save document
