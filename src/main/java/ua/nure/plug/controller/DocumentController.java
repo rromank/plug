@@ -40,8 +40,8 @@ public class DocumentController {
         String text = documentExtractor.extractText(file);
 //        String lang = languageIdentifier.identifyLanguage(text);
         List<String> words = textTokenizer.tokenize(text);
-        List<String> shingles = shingleService.createShingles(words);
-        model.addAttribute("shingles", shingles);
+//        List<String> shingles = shingleService.createShingles(words);
+//        model.addAttribute("shingles", shingles);
         return "uploadForm";
     }
 

@@ -1,5 +1,6 @@
 package ua.nure.plug.service.shingle.impl;
 
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.nure.plug.model.Document;
@@ -9,6 +10,7 @@ import ua.nure.plug.service.shingle.ShingleService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,18 +23,15 @@ public class ShingleServiceImpl implements ShingleService {
 
     @Override
     public List<Shingle> createShingles(List<String> words) {
-        List<Shingle> shingles = new ArrayList<>();
-        for (int i = 0; i < words.size() - SHINGLE_LENGTH; i++) {
-            String word = words.subList(i, i + SHINGLE_LENGTH).stream()
-                    .collect(Collectors.joining());
-
-            Shingle shingle = new Shingle();
-            shingle.setShingle(word);
-            shingle.setOffset(i);
-            shingle.setHash(hashService.md5(word));
-            shingles.add(shingle);
-        }
-        return shingles;
+        AtomicInteger offset = new AtomicInteger(0);
+        return Lists.partition(words, SHINGLE_LENGTH).stream()
+                .map(strings -> strings.stream().collect(Collectors.joining()))
+                .map(sequence -> Shingle.builder()
+                        .offset(offset.getAndIncrement())
+                        .shingle(sequence)
+                        .hash(hashService.md5(sequence))
+                        .build())
+                .collect(Collectors.toList());
     }
 
     @Override
