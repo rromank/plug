@@ -6,4 +6,6 @@ public interface DocumentService {
 
     Document createFrom(String text);
 
+    Iterable<Document> getAll();
+
 }

@@ -3,18 +3,14 @@ package ua.nure.plug.controller;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import ua.nure.plug.model.Document;
 import ua.nure.plug.service.DocumentExtractor;
-import ua.nure.plug.service.LanguageIdentifier;
-import ua.nure.plug.service.shingle.ShingleService;
-import ua.nure.plug.service.text.TextTokenizer;
-
-import java.util.List;
+import ua.nure.plug.service.DocumentService;
 
 @Log4j
 @Controller
@@ -24,25 +20,17 @@ public class DocumentController {
     @Autowired
     private DocumentExtractor documentExtractor;
     @Autowired
-    private LanguageIdentifier languageIdentifier;
-    @Autowired
-    private TextTokenizer textTokenizer;
-    @Autowired
-    private ShingleService shingleService;
+    private DocumentService documentService;
 
-    @GetMapping("/upload")
-    public String uploadForm() {
-        return "uploadForm";
+    @GetMapping
+    public Iterable<Document> getAll() {
+        return documentService.getAll();
     }
 
     @PostMapping
-    public String uploadFile(@RequestParam("file") MultipartFile file, Model model) {
+    public void uploadFile(@RequestParam("file") MultipartFile file) {
         String text = documentExtractor.extractText(file);
-//        String lang = languageIdentifier.identifyLanguage(text);
-        List<String> words = textTokenizer.tokenize(text);
-//        List<String> shingles = shingleService.createShingles(words);
-//        model.addAttribute("shingles", shingles);
-        return "uploadForm";
+        documentService.createFrom(text);
     }
 
 }
