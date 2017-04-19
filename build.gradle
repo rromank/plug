@@ -3,14 +3,16 @@ version '1.0-SNAPSHOT'
 
 buildscript {
     ext{
-        springBootVersion = '1.5.1.RELEASE'
+        springBootVersion = '1.5.2.RELEASE'
     }
     repositories {
         mavenCentral()
+        jcenter()
     }
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
         classpath "org.projectlombok:lombok:1.16.14"
+        classpath 'org.springframework:springloaded:1.2.6.RELEASE'
     }
 }
 
@@ -18,6 +20,13 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
+
+idea {
+    module {
+        inheritOutputDirs = false
+        outputDir = file("$buildDir/classes/main/")
+    }
+}
 
 jar {
     baseName = 'plug'
@@ -34,7 +43,8 @@ dependencies {
     compile group: 'org.sonarsource.scanner.maven', name: 'sonar-maven-plugin', version: '3.2'
 
 
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-elasticsearch', version: '1.5.1.RELEASE'
+//    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-elasticsearch', version: '1.5.1.RELEASE'
+    compile group: 'org.springframework.data', name: 'spring-data-elasticsearch', version: '2.1.1.RELEASE'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf', version: '1.5.2.RELEASE'
 //    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-mongodb', version: '1.5.0.RELEASE'
     compile "org.projectlombok:lombok:1.16.14"
@@ -42,6 +52,10 @@ dependencies {
     compile group: 'org.apache.commons', name: 'commons-compress', version: '1.5'
     compile group: 'org.apache.poi', name: 'poi-ooxml', version: '3.9'
     compile group: 'log4j', name: 'log4j', version: '1.2.16'
+
+    compile group: 'org.jsondoc', name: 'spring-boot-starter-jsondoc', version: '1.2.17'
+    compile group: 'org.jsondoc', name: 'jsondoc-ui-webjar', version: '1.2.17'
+
 
 
     runtime "net.java.dev.jna:jna"

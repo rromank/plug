@@ -1,12 +1,27 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="/templates.fragments/haed :: head"> </head>
 <body>
-    <div class="container">
 
-        Container
+<div>
+    <form method="POST" enctype="multipart/form-data" action="/document">
+        <table>
+            <tr>
+                <td>File to upload:</td>
+                <td><input type="file" name="file"/></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><input type="submit" value="Upload"/></td>
+            </tr>
+        </table>
+    </form>
+</div>
 
+<div th:if="${shingles}">
+    <div th:each="shingle : ${shingles}">
+        <span th:text="${shingle}"></span>
     </div>
-<div th:replace="/templates.fragments/footer :: footer"> </div>
+</div>
+
 </body>
 </html>

@@ -1,20 +1,17 @@
 package ua.nure.plug.model;
 
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @EqualsAndHashCode(of = "shingle")
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Shingle {
 
     private String shingle;
     private String hash;
     private int offset;
-
-
 
 }

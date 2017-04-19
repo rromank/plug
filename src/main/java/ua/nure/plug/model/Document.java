@@ -1,23 +1,24 @@
 package ua.nure.plug.model;
 
-import lombok.Builder;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Getter
 @Setter
-@Builder
 @org.springframework.data.elasticsearch.annotations.Document(indexName = "plug", type = "document")
 public class Document {
 
     @Id
+    @JsonIgnore
     private String id = UUID.randomUUID().toString();
-    private String name;
-    private List<Shingle> shingles;
+    private String date;
+    private List<Shingle> shingles = new ArrayList<>();
     private List<String> words;
 
 }
