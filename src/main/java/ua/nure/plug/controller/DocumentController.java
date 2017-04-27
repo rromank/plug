@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ua.nure.plug.converter.DocumentConverter;
 import ua.nure.plug.dto.DocumentInfo;
+import ua.nure.plug.model.Document;
 import ua.nure.plug.service.DocumentExtractor;
 import ua.nure.plug.service.DocumentService;
 
@@ -28,6 +29,12 @@ public class DocumentController {
         return documentService.getAll().stream()
                 .map(documentConverter::convert)
                 .collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public DocumentInfo getById(@PathVariable("id") String id) {
+        Document document = documentService.getById(id);
+        return documentConverter.convert(document);
     }
 
     @RequestMapping(method = RequestMethod.POST)
