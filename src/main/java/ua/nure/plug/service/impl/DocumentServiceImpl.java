@@ -35,7 +35,7 @@ public class DocumentServiceImpl implements DocumentService {
         List<Shingle> shingles = shingleService.createShingles(words);
 
         Document document = new Document();
-        document.setDate(FastDateFormat.getInstance("yyyy-MM-dd hh:mm:ss.SSS").format(System.currentTimeMillis()));
+        document.setDate(FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss.SSS").format(System.currentTimeMillis()));
         document.setText(text);
         document.setShingles(shingles);
 
