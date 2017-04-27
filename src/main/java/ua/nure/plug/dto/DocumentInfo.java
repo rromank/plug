@@ -9,7 +9,7 @@ public class DocumentInfo {
 
     private String id;
     private String date;
+    private String text;
     private int shinglesCount;
-    private int wordsCount;
 
 }

@@ -18,7 +18,7 @@ public class Document {
     @JsonIgnore
     private String id = UUID.randomUUID().toString();
     private String date;
+    private String text;
     private List<Shingle> shingles = new ArrayList<>();
-    private List<String> words;
 
 }

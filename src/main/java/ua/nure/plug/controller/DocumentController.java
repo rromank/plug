@@ -8,11 +8,11 @@ import ua.nure.plug.dto.DocumentInfo;
 import ua.nure.plug.service.DocumentExtractor;
 import ua.nure.plug.service.DocumentService;
 
-import javax.websocket.server.PathParam;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/document")
 public class DocumentController {
 

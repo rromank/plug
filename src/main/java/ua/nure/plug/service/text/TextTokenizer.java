@@ -4,6 +4,8 @@ import java.util.List;
 
 public interface TextTokenizer {
 
-    List<String> tokenize(String text);
+    List<String> tokenizeWords(String text);
+
+    List<Token> tokenize(String text);
 
 }

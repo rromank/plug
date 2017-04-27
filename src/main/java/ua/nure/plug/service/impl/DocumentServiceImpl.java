@@ -10,6 +10,7 @@ import ua.nure.plug.repository.elastic.DocumentRepository;
 import ua.nure.plug.service.DocumentService;
 import ua.nure.plug.service.shingle.ShingleService;
 import ua.nure.plug.service.text.TextTokenizer;
+import ua.nure.plug.service.text.Token;
 
 import java.util.List;
 
@@ -24,13 +25,18 @@ public class DocumentServiceImpl implements DocumentService {
     private DocumentRepository documentRepository;
 
     @Override
+    public Document getById(String id) {
+        return documentRepository.findOne(id);
+    }
+
+    @Override
     public Document createFrom(String text) {
-        List<String> words = tokenizer.tokenize(text);
+        List<Token> words = tokenizer.tokenize(text.toLowerCase());
         List<Shingle> shingles = shingleService.createShingles(words);
 
         Document document = new Document();
         document.setDate(FastDateFormat.getInstance("yyyy-MM-dd hh:mm:ss.SSS").format(System.currentTimeMillis()));
-        document.setWords(words);
+        document.setText(text);
         document.setShingles(shingles);
 
         return documentRepository.save(document);

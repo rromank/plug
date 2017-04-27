@@ -33,7 +33,7 @@ public class LanguageIdentifierImpl implements LanguageIdentifier {
 
     @Override
     public String identifyLanguage(String text) {
-        MultiSearchRequestBuilder requestBuilder = prepareRequestBuilder(textTokenizer.tokenize(text));
+        MultiSearchRequestBuilder requestBuilder = prepareRequestBuilder(textTokenizer.tokenizeWords(text));
 
         Map<String, Integer> langs = new HashMap<>();
         for (MultiSearchResponse.Item item : requestBuilder.get().getResponses()) {

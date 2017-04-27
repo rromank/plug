@@ -13,8 +13,8 @@ public class DocumentConverter implements Converter<Document, DocumentInfo> {
         DocumentInfo documentInfo = new DocumentInfo();
         documentInfo.setId(document.getId());
         documentInfo.setDate(document.getDate());
+        documentInfo.setText(document.getText());
         documentInfo.setShinglesCount(document.getShingles().size());
-        documentInfo.setWordsCount(document.getWords().size());
         return documentInfo;
     }
 

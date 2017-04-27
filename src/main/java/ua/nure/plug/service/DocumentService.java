@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface DocumentService {
 
+    Document getById(String id);
+
     Document createFrom(String text);
 
     List<Document> getAll();

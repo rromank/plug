@@ -9,20 +9,17 @@ import org.springframework.web.multipart.MultipartFile;
 import ua.nure.plug.service.DocumentExtractor;
 
 import java.io.InputStream;
-import java.util.regex.Pattern;
 
 @Log4j
 @Component
 public class DocumentExtractorImpl implements DocumentExtractor {
-
-    private Pattern pattern = Pattern.compile("[а-яА-Яёєїі\']{3,}");
 
     @Override
     public String extractText(MultipartFile file) {
         try (InputStream inputStream = file.getInputStream()) {
             XWPFDocument xwpf = new XWPFDocument(inputStream);
             XWPFWordExtractor wordExtractor = new XWPFWordExtractor(xwpf);
-            return wordExtractor.getText().trim().toLowerCase();
+            return wordExtractor.getText().trim();
         } catch (Exception e) {
             log.error("Can't extract text from file.");
         }

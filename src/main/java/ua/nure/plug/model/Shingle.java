@@ -12,6 +12,6 @@ public class Shingle {
 
     private String shingle;
     private String hash;
-    private int offset;
+    private Range range;
 
 }
