@@ -8,6 +8,8 @@ public interface DocumentService {
 
     Document getById(String id);
 
+    Document getByText(String text);
+
     Document createFrom(String text);
 
     List<Document> getAll();

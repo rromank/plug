@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ua.nure.plug.converter.DocumentConverter;
 import ua.nure.plug.dto.DocumentInfo;
+import ua.nure.plug.dto.ResponseMessage;
+import ua.nure.plug.dto.ResponseMessageType;
 import ua.nure.plug.model.Document;
 import ua.nure.plug.service.DocumentExtractor;
 import ua.nure.plug.service.DocumentService;
@@ -28,6 +30,7 @@ public class DocumentController {
     public List<DocumentInfo> getAll() {
         return documentService.getAll().stream()
                 .map(documentConverter::convert)
+                .sorted((o1, o2) -> o1.getDate().compareTo(o2.getDate()))
                 .collect(Collectors.toList());
     }
 
@@ -38,9 +41,13 @@ public class DocumentController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public void uploadFile(@RequestParam("file") MultipartFile file) {
+    public ResponseMessage uploadFile(@RequestParam("file") MultipartFile file) {
         String text = documentExtractor.extractText(file);
+        if (documentService.getByText(text) != null) {
+            return new ResponseMessage("Same document already exists.", ResponseMessageType.ERROR);
+        }
         documentService.createFrom(text);
+        return new ResponseMessage("Created", ResponseMessageType.OK);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
