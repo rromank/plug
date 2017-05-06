@@ -8,18 +8,21 @@ import ua.nure.plug.model.Similarity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 @Component
 public class ShingleSimilarity implements DocumentSimilarity {
 
+
+    @Override
+    public Similarity similarity(Document document, Set<Document> documents) {
+
+
+        return null;
+    }
+
     @Override
     public Similarity similarity(Document document1, Document document2) {
-//        float neumerator = Sets.intersection(Sets.newHashSet(document1.getShingles()), Sets.newHashSet(document2.getShingles())).size();
-//        float denominator = Sets.union(Sets.newHashSet(document1.getShingles()), Sets.newHashSet(document2.getShingles())).size();
-//        return neumerator /  Math.min(document1.getShingles().size(), document2.getShingles().size());
-//        return neumerator / denominator;
-
         List<Shingle> intersection1 = new ArrayList<>(document1.getShingles());
         intersection1.retainAll(document2.getShingles());
 

@@ -2,7 +2,15 @@ package ua.nure.plug.service.impl;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.lang.time.FastDateFormat;
+import org.elasticsearch.action.search.MultiSearchRequestBuilder;
+import org.elasticsearch.action.search.MultiSearchResponse;
+import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.Client;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.stereotype.Service;
 import ua.nure.plug.model.Document;
 import ua.nure.plug.model.Shingle;
@@ -13,7 +21,10 @@ import ua.nure.plug.service.shingle.ShingleService;
 import ua.nure.plug.service.text.TextTokenizer;
 import ua.nure.plug.service.text.Token;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class DocumentServiceImpl implements DocumentService {
@@ -26,6 +37,8 @@ public class DocumentServiceImpl implements DocumentService {
     private ShingleService shingleService;
     @Autowired
     private DocumentRepository documentRepository;
+    @Autowired
+    private ElasticsearchTemplate elasticsearchTemplate;
 
     @Override
     public Document getById(String id) {
@@ -35,6 +48,34 @@ public class DocumentServiceImpl implements DocumentService {
     public Document getByText(String text) {
         String id = hashService.md5(text);
         return documentRepository.findOne(id);
+    }
+
+    @Override
+    public Set<Document> getByDocumentShingles(Document document) {
+        Client client = elasticsearchTemplate.getClient();
+
+        Set<String> docs = new HashSet<>();
+        for (List<Shingle> shingleList : Lists.partition(document.getShingles(), 100)) {
+            MultiSearchRequestBuilder multiSearchRequestBuilder = client.prepareMultiSearch();
+            for (Shingle shingle : shingleList) {
+                BoolQueryBuilder bo = new BoolQueryBuilder()
+                        .must(QueryBuilders.matchQuery("shingles.hash", shingle.getHash()))
+                        .mustNot(QueryBuilders.matchQuery("_id", document.getId()));
+                SearchRequestBuilder srb = client.prepareSearch()
+                        .setQuery(bo)
+                        .setSize(1);
+                multiSearchRequestBuilder.add(srb);
+            }
+
+            MultiSearchResponse sr = multiSearchRequestBuilder.get();
+            for (MultiSearchResponse.Item item : sr.getResponses()) {
+                SearchResponse response = item.getResponse();
+                response.getHits().forEach(searchHitFields -> docs.add(searchHitFields.getId()));
+            }
+        }
+        return docs.stream()
+                .map(this::getById)
+                .collect(Collectors.toSet());
     }
 
     @Override
