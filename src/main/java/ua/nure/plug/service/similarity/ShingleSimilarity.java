@@ -1,10 +1,7 @@
 package ua.nure.plug.service.similarity;
 
 import org.springframework.stereotype.Component;
-import ua.nure.plug.model.Document;
-import ua.nure.plug.model.Range;
-import ua.nure.plug.model.Shingle;
-import ua.nure.plug.model.Similarity;
+import ua.nure.plug.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,10 +12,39 @@ public class ShingleSimilarity implements DocumentSimilarity {
 
 
     @Override
-    public Similarity similarity(Document document, Set<Document> documents) {
+    public ComplexSim similarity(Document document, Set<Document> documents) {
+        ComplexSim complexSim = new ComplexSim(document.getId());
 
+        List<Shingle> allShingles = new ArrayList<>();
 
-        return null;
+        for (Document document2 : documents) {
+            complexSim.addSim(sim(document, document2));
+            allShingles.addAll(document2.getShingles());
+        }
+
+        List<Shingle> intersection = new ArrayList<>(document.getShingles());
+        intersection.retainAll(allShingles);
+
+        double coefficient = 1.0 * intersection.size() / document.getShingles().size();
+        complexSim.setCoefficient(coefficient);
+
+        return complexSim;
+    }
+
+    @Override
+    public Sim sim(Document document, Document document2) {
+        List<Shingle> intersection1 = new ArrayList<>(document.getShingles());
+        intersection1.retainAll(document2.getShingles());
+
+        List<Shingle> intersection2 = new ArrayList<>(document2.getShingles());
+        intersection2.retainAll(document.getShingles());
+
+        double coefficient = 1.0 * intersection1.size() / document.getShingles().size();
+
+        Sim sim = new Sim(document.getId(), coefficient);
+        sim.addRanges(document.getId(), getRanges(intersection1));
+        sim.addRanges(document2.getId(), getRanges(intersection2));
+        return sim;
     }
 
     @Override
