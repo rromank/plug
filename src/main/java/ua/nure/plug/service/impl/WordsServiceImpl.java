@@ -17,6 +17,12 @@ public class WordsServiceImpl implements WordsService {
     private WordRepository wordRepository;
 
     @Override
+    public String getNoun(String word) {
+        List<Word> words = wordRepository.findOneByForms(word);
+        return words.size() > 0 ? words.get(0).getNoun() : word;
+    }
+
+    @Override
     public String getNoun(String word, String lang) {
         List<Word> words = wordRepository.findOneByForms(word);
         return words.size() > 0 ? words.get(0).getNoun() : word;

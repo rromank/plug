@@ -49,7 +49,7 @@ public class ShingleDocumentServiceImpl implements ShingleDocumentService {
             for (Shingle shingle : shingleList) {
                 BoolQueryBuilder bo = new BoolQueryBuilder()
                         .must(QueryBuilders.matchQuery("shingles.hash", shingle.getHash()))
-                        .mustNot(QueryBuilders.matchQuery("_id", documentId));
+                        .mustNot(QueryBuilders.matchQuery("document", documentId));
                 SearchRequestBuilder srb = client.prepareSearch()
                         .setQuery(bo)
                         .setSize(1);
@@ -59,7 +59,7 @@ public class ShingleDocumentServiceImpl implements ShingleDocumentService {
             MultiSearchResponse sr = multiSearchRequestBuilder.get();
             for (MultiSearchResponse.Item item : sr.getResponses()) {
                 SearchResponse response = item.getResponse();
-                response.getHits().forEach(searchHitFields -> docs.add(searchHitFields.getId()));
+                response.getHits().forEach(searchHitFields -> docs.add(searchHitFields.getSource().get("document").toString()));
             }
         }
         return docs.stream()

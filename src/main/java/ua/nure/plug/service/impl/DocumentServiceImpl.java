@@ -53,7 +53,7 @@ public class DocumentServiceImpl implements DocumentService {
 
         String normalized = normalizationService.normalize(text);
         textService.create(new Text(documentId, text, normalized));
-        shingleDocumentService.create(new ShingleDocument(documentId, shingleService.createShingles(text)));
+        shingleDocumentService.create(new ShingleDocument(documentId, shingleService.createShingles(normalized)));
 
         return documentRepository.save(document);
     }

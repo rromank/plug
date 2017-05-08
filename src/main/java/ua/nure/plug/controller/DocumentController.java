@@ -49,7 +49,7 @@ public class DocumentController {
         Document document = documentService.getById(id);
         Text text = textService.getByDocumentId(id);
         DocumentInfo dto = documentConverter.convert(document);
-        dto.setText(text.getText());
+        dto.setText(text.getNormalized());
 
         return dto;
     }
@@ -60,8 +60,8 @@ public class DocumentController {
         if (documentService.getByText(text) != null) {
             return new ResponseMessage("Same document already exists.", ResponseMessageType.ERROR);
         }
-        documentService.createFrom(file.getOriginalFilename(), text);
-        return new ResponseMessage("Created", ResponseMessageType.OK);
+        Document document = documentService.createFrom(file.getOriginalFilename(), text);
+        return new ResponseMessage(document.getId(), ResponseMessageType.OK);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)

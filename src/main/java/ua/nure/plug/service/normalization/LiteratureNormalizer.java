@@ -1,9 +1,15 @@
 package ua.nure.plug.service.normalization;
 
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Service
+@Qualifier(value = "literatureNormalizer")
 public class LiteratureNormalizer extends Normalizer {
 
     private static final String[] LITERATURE_TITLES = {

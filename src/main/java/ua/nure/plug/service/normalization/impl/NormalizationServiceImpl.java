@@ -1,24 +1,34 @@
 package ua.nure.plug.service.normalization.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.nure.plug.service.normalization.*;
+
+import javax.annotation.PostConstruct;
 
 @Service
 public class NormalizationServiceImpl implements NormalizationService {
 
+    @Autowired
+    private LowercaseNormalizer lowercaseNormalizer;
+    @Autowired
+    private IntroductionNormalizer introductionNormalizer;
+    @Autowired
+    private LiteratureNormalizer literatureNormalizer;
+    @Autowired
+    private WrongWordsNormalizer wrongWordsNormalizer;
+    @Autowired
+    private NounNormalizer nounNormalizer;
+
     private Normalizer normalizer;
 
-    public NormalizationServiceImpl() {
-        normalizer = new LowercaseNormalizer();
-
-        Normalizer introductionNormalizer = new IntroductionNormalizer();
-        normalizer.setNext(introductionNormalizer);
-
-        Normalizer literatureNormalizer = new LiteratureNormalizer();
+    @PostConstruct
+    public void init() {
+        lowercaseNormalizer.setNext(introductionNormalizer);
         introductionNormalizer.setNext(literatureNormalizer);
-
-        Normalizer wrongWordsNormalizer = new WrongWordsNormalizer();
         literatureNormalizer.setNext(wrongWordsNormalizer);
+//        wrongWordsNormalizer.setNext(nounNormalizer);
+        normalizer = lowercaseNormalizer;
     }
 
     @Override

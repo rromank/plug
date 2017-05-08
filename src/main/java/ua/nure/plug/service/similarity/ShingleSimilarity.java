@@ -14,10 +14,9 @@ import java.util.List;
 @Component
 public class ShingleSimilarity implements DocumentSimilarity {
 
-
     @Override
     public ComplexSim similarity(ShingleDocument document, List<ShingleDocument> documents) {
-        ComplexSim complexSim = new ComplexSim(document.getId());
+        ComplexSim complexSim = new ComplexSim(document.getDocument());
 
         List<Shingle> allShingles = new ArrayList<>();
 
@@ -32,6 +31,7 @@ public class ShingleSimilarity implements DocumentSimilarity {
         double coefficient = (1.0 * intersection.size() / document.getShingles().size()) * 100;
         coefficient = Precision.round(coefficient, 2);
         complexSim.setCoefficient(coefficient);
+        complexSim.setRanges(getRanges(intersection));
 
         return complexSim;
     }
@@ -47,7 +47,7 @@ public class ShingleSimilarity implements DocumentSimilarity {
         double coefficient = (1.0 * intersection1.size() / document.getShingles().size()) * 100;
         coefficient = Precision.round(coefficient, 2);
 
-        Sim sim = new Sim(document.getDocument(), coefficient);
+        Sim sim = new Sim(document2.getDocument(), coefficient);
         sim.addRanges(document.getDocument(), getRanges(intersection1));
         sim.addRanges(document2.getDocument(), getRanges(intersection2));
         return sim;

@@ -13,6 +13,7 @@ import java.util.Map;
 public class Sim {
 
     private String documentId;
+    private String filename;
     private double coefficient;
     private Map<String, List<Range>> ranges = new HashMap<>();
 

@@ -1,8 +1,14 @@
 package ua.nure.plug.service.normalization;
 
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Service
+@Qualifier(value = "wrongWordsNormalizer")
 public class WrongWordsNormalizer extends Normalizer {
 
     private Pattern pattern = Pattern.compile("([а-яА-Яёєїі]*[oaiepukx]+[а-яА-Яёєїі]*)");
