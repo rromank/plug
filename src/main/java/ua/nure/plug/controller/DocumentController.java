@@ -7,9 +7,11 @@ import ua.nure.plug.converter.DocumentConverter;
 import ua.nure.plug.dto.DocumentInfo;
 import ua.nure.plug.dto.ResponseMessage;
 import ua.nure.plug.dto.ResponseMessageType;
-import ua.nure.plug.model.Document;
+import ua.nure.plug.model.elastic.Document;
+import ua.nure.plug.model.elastic.Text;
 import ua.nure.plug.service.DocumentExtractor;
 import ua.nure.plug.service.DocumentService;
+import ua.nure.plug.service.TextService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,6 +23,8 @@ public class DocumentController {
 
     @Autowired
     private DocumentService documentService;
+    @Autowired
+    private TextService textService;
     @Autowired
     private DocumentExtractor documentExtractor;
     @Autowired
@@ -40,13 +44,23 @@ public class DocumentController {
         return documentConverter.convert(document);
     }
 
+    @RequestMapping(value = "text/{id}", method = RequestMethod.GET)
+    public DocumentInfo getTextById(@PathVariable("id") String id) {
+        Document document = documentService.getById(id);
+        Text text = textService.getByDocumentId(id);
+        DocumentInfo dto = documentConverter.convert(document);
+        dto.setText(text.getText());
+
+        return dto;
+    }
+
     @RequestMapping(method = RequestMethod.POST)
     public ResponseMessage uploadFile(@RequestParam("file") MultipartFile file) {
         String text = documentExtractor.extractText(file);
         if (documentService.getByText(text) != null) {
             return new ResponseMessage("Same document already exists.", ResponseMessageType.ERROR);
         }
-        documentService.createFrom(text);
+        documentService.createFrom(file.getOriginalFilename(), text);
         return new ResponseMessage("Created", ResponseMessageType.OK);
     }
 

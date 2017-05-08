@@ -2,7 +2,7 @@ package ua.nure.plug.repository.elastic;
 
 import org.springframework.data.elasticsearch.annotations.Query;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
-import ua.nure.plug.model.Word;
+import ua.nure.plug.model.elastic.Word;
 
 import java.util.List;
 

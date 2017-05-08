@@ -8,8 +8,9 @@ import lombok.Setter;
 public class DocumentInfo {
 
     private String id;
+    private String filename;
     private String date;
-    private String text;
     private int shinglesCount;
+    private String text;
 
 }

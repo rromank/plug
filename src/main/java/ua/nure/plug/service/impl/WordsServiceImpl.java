@@ -3,7 +3,7 @@ package ua.nure.plug.service.impl;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ua.nure.plug.model.Word;
+import ua.nure.plug.model.elastic.Word;
 import ua.nure.plug.repository.elastic.WordRepository;
 import ua.nure.plug.service.WordsService;
 

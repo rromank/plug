@@ -6,7 +6,7 @@ import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import ua.nure.plug.model.Word;
+import ua.nure.plug.model.elastic.Word;
 import ua.nure.plug.repository.elastic.WordRepository;
 
 import javax.annotation.PostConstruct;

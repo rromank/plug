@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface ShingleService {
 
+    List<Shingle> createShingles(String text);
+
     List<Shingle> createShingles(List<Token> words);
 
 }

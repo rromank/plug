@@ -1,9 +1,9 @@
-package ua.nure.plug.model;
+package ua.nure.plug.model.elastic;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import ua.nure.plug.model.Shingle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,10 +15,8 @@ import java.util.UUID;
 public class Document {
 
     @Id
-    @JsonIgnore
     private String id = UUID.randomUUID().toString();
+    private String filename;
     private String date;
-    private String text;
-    private List<Shingle> shingles = new ArrayList<>();
 
 }

@@ -2,29 +2,20 @@ package ua.nure.plug.service.impl;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.lang.time.FastDateFormat;
-import org.elasticsearch.action.search.MultiSearchRequestBuilder;
-import org.elasticsearch.action.search.MultiSearchResponse;
-import org.elasticsearch.action.search.SearchRequestBuilder;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.stereotype.Service;
-import ua.nure.plug.model.Document;
-import ua.nure.plug.model.Shingle;
+import ua.nure.plug.model.elastic.Document;
+import ua.nure.plug.model.elastic.ShingleDocument;
+import ua.nure.plug.model.elastic.Text;
 import ua.nure.plug.repository.elastic.DocumentRepository;
 import ua.nure.plug.service.DocumentService;
 import ua.nure.plug.service.HashService;
+import ua.nure.plug.service.ShingleDocumentService;
+import ua.nure.plug.service.TextService;
+import ua.nure.plug.service.normalization.NormalizationService;
 import ua.nure.plug.service.shingle.ShingleService;
-import ua.nure.plug.service.text.TextTokenizer;
-import ua.nure.plug.service.text.Token;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class DocumentServiceImpl implements DocumentService {
@@ -32,13 +23,15 @@ public class DocumentServiceImpl implements DocumentService {
     @Autowired
     private HashService hashService;
     @Autowired
-    private TextTokenizer tokenizer;
-    @Autowired
     private ShingleService shingleService;
+    @Autowired
+    private TextService textService;
     @Autowired
     private DocumentRepository documentRepository;
     @Autowired
-    private ElasticsearchTemplate elasticsearchTemplate;
+    private ShingleDocumentService shingleDocumentService;
+    @Autowired
+    private NormalizationService normalizationService;
 
     @Override
     public Document getById(String id) {
@@ -51,43 +44,16 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public Set<Document> getByDocumentShingles(Document document) {
-        Client client = elasticsearchTemplate.getClient();
-
-        Set<String> docs = new HashSet<>();
-        for (List<Shingle> shingleList : Lists.partition(document.getShingles(), 100)) {
-            MultiSearchRequestBuilder multiSearchRequestBuilder = client.prepareMultiSearch();
-            for (Shingle shingle : shingleList) {
-                BoolQueryBuilder bo = new BoolQueryBuilder()
-                        .must(QueryBuilders.matchQuery("shingles.hash", shingle.getHash()))
-                        .mustNot(QueryBuilders.matchQuery("_id", document.getId()));
-                SearchRequestBuilder srb = client.prepareSearch()
-                        .setQuery(bo)
-                        .setSize(1);
-                multiSearchRequestBuilder.add(srb);
-            }
-
-            MultiSearchResponse sr = multiSearchRequestBuilder.get();
-            for (MultiSearchResponse.Item item : sr.getResponses()) {
-                SearchResponse response = item.getResponse();
-                response.getHits().forEach(searchHitFields -> docs.add(searchHitFields.getId()));
-            }
-        }
-        return docs.stream()
-                .map(this::getById)
-                .collect(Collectors.toSet());
-    }
-
-    @Override
-    public Document createFrom(String text) {
-        List<Token> words = tokenizer.tokenize(text.toLowerCase());
-        List<Shingle> shingles = shingleService.createShingles(words);
-
+    public Document createFrom(String filename, String text) {
+        String documentId = hashService.md5(text);
         Document document = new Document();
-        document.setId(hashService.md5(text));
+        document.setId(documentId);
+        document.setFilename(filename);
         document.setDate(FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss.SSS").format(System.currentTimeMillis()));
-        document.setText(text);
-        document.setShingles(shingles);
+
+        String normalized = normalizationService.normalize(text);
+        textService.create(new Text(documentId, text, normalized));
+        shingleDocumentService.create(new ShingleDocument(documentId, shingleService.createShingles(text)));
 
         return documentRepository.save(document);
     }
@@ -103,11 +69,15 @@ public class DocumentServiceImpl implements DocumentService {
     @Override
     public void delete(String id) {
         documentRepository.delete(id);
+        textService.deleteByDocumentId(id);
+        shingleDocumentService.deleteByDocumentId(id);
     }
 
     @Override
     public void deleteAll() {
         documentRepository.deleteAll();
+        textService.deleteAll();
+        shingleDocumentService.deleteAll();
     }
 
 }

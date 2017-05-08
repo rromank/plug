@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ua.nure.plug.model.Range;
 import ua.nure.plug.model.Shingle;
 import ua.nure.plug.service.HashService;
+import ua.nure.plug.service.text.TextTokenizer;
 import ua.nure.plug.service.text.Token;
 
 import java.util.ArrayList;
@@ -18,6 +19,14 @@ public class ShingleServiceImpl implements ShingleService {
 
     @Autowired
     private HashService hashService;
+    @Autowired
+    private TextTokenizer tokenizer;
+
+    @Override
+    public List<Shingle> createShingles(String text) {
+        List<Token> words = tokenizer.tokenize(text.toLowerCase());
+        return createShingles(words);
+    }
 
     @Override
     public List<Shingle> createShingles(List<Token> tokens) {

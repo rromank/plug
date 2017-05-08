@@ -1,7 +1,6 @@
 package ua.nure.plug.service;
 
-import ua.nure.plug.model.Document;
-import ua.nure.plug.model.Shingle;
+import ua.nure.plug.model.elastic.Document;
 
 import java.util.List;
 import java.util.Set;
@@ -12,9 +11,7 @@ public interface DocumentService {
 
     Document getByText(String text);
 
-    Set<Document> getByDocumentShingles(Document document);
-
-    Document createFrom(String text);
+    Document createFrom(String filename, String text);
 
     List<Document> getAll();
 

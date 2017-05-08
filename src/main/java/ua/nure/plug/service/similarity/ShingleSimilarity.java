@@ -1,63 +1,56 @@
 package ua.nure.plug.service.similarity;
 
+import org.apache.commons.math3.util.Precision;
 import org.springframework.stereotype.Component;
-import ua.nure.plug.model.*;
+import ua.nure.plug.model.ComplexSim;
+import ua.nure.plug.model.Range;
+import ua.nure.plug.model.Shingle;
+import ua.nure.plug.model.Sim;
+import ua.nure.plug.model.elastic.ShingleDocument;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Component
 public class ShingleSimilarity implements DocumentSimilarity {
 
 
     @Override
-    public ComplexSim similarity(Document document, Set<Document> documents) {
+    public ComplexSim similarity(ShingleDocument document, List<ShingleDocument> documents) {
         ComplexSim complexSim = new ComplexSim(document.getId());
 
         List<Shingle> allShingles = new ArrayList<>();
 
-        for (Document document2 : documents) {
-            complexSim.addSim(sim(document, document2));
+        for (ShingleDocument document2 : documents) {
+            complexSim.addSim(similarity(document, document2));
             allShingles.addAll(document2.getShingles());
         }
 
         List<Shingle> intersection = new ArrayList<>(document.getShingles());
         intersection.retainAll(allShingles);
 
-        double coefficient = 1.0 * intersection.size() / document.getShingles().size();
+        double coefficient = (1.0 * intersection.size() / document.getShingles().size()) * 100;
+        coefficient = Precision.round(coefficient, 2);
         complexSim.setCoefficient(coefficient);
 
         return complexSim;
     }
 
     @Override
-    public Sim sim(Document document, Document document2) {
+    public Sim similarity(ShingleDocument document, ShingleDocument document2) {
         List<Shingle> intersection1 = new ArrayList<>(document.getShingles());
         intersection1.retainAll(document2.getShingles());
 
         List<Shingle> intersection2 = new ArrayList<>(document2.getShingles());
         intersection2.retainAll(document.getShingles());
 
-        double coefficient = 1.0 * intersection1.size() / document.getShingles().size();
+        double coefficient = (1.0 * intersection1.size() / document.getShingles().size()) * 100;
+        coefficient = Precision.round(coefficient, 2);
 
-        Sim sim = new Sim(document.getId(), coefficient);
-        sim.addRanges(document.getId(), getRanges(intersection1));
-        sim.addRanges(document2.getId(), getRanges(intersection2));
+        Sim sim = new Sim(document.getDocument(), coefficient);
+        sim.addRanges(document.getDocument(), getRanges(intersection1));
+        sim.addRanges(document2.getDocument(), getRanges(intersection2));
         return sim;
-    }
-
-    @Override
-    public Similarity similarity(Document document1, Document document2) {
-        List<Shingle> intersection1 = new ArrayList<>(document1.getShingles());
-        intersection1.retainAll(document2.getShingles());
-
-        List<Shingle> intersection2 = new ArrayList<>(document2.getShingles());
-        intersection2.retainAll(document1.getShingles());
-
-        double coefficient = 1.0 * intersection1.size() / Math.min(document1.getShingles().size(), document2.getShingles().size());
-
-        return new Similarity(coefficient, getRanges(intersection1), getRanges(intersection2));
     }
 
     private List<Range> getRanges(List<Shingle> shingles) {
