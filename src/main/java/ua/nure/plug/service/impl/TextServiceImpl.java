@@ -15,6 +15,11 @@ public class TextServiceImpl implements TextService {
     private TextRepository textRepository;
 
     @Override
+    public List<Text> getAll() {
+        return textRepository.findAll().getContent();
+    }
+
+    @Override
     public void create(Text text) {
         textRepository.save(text);
     }

@@ -12,6 +12,8 @@ import java.util.Set;
 
 public interface DocumentSimilarity {
 
+    double jaccard(ShingleDocument document, ShingleDocument document2);
+
     ComplexSim similarity(ShingleDocument document, List<ShingleDocument> documents);
 
     Sim similarity(ShingleDocument document, ShingleDocument document2);

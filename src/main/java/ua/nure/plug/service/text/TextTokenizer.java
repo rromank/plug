@@ -8,4 +8,6 @@ public interface TextTokenizer {
 
     List<Token> tokenize(String text);
 
+    List<String> tokenizeBySpace(String text);
+
 }

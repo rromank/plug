@@ -12,6 +12,8 @@ public interface ShingleDocumentService {
 
     ShingleDocument getByDocumentId(String documentId);
 
+    List<ShingleDocument> getAll();
+
     List<ShingleDocument> getByDocumentIdShingles(String documentId);
 
     void deleteByDocumentId(String documentId);

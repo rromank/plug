@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import ua.nure.plug.service.DocumentExtractor;
 
-import java.io.InputStream;
+import java.io.*;
 
 @Log4j
 @Component
@@ -16,8 +16,25 @@ public class DocumentExtractorImpl implements DocumentExtractor {
 
     @Override
     public String extractText(MultipartFile file) {
-        try (InputStream inputStream = file.getInputStream()) {
-            XWPFDocument xwpf = new XWPFDocument(inputStream);
+        try {
+            return extractText(file.getInputStream());
+        } catch (IOException e) {
+            return "";
+        }
+    }
+
+    @Override
+    public String extractText(File file) {
+        try {
+            return extractText(new FileInputStream(file));
+        } catch (FileNotFoundException e) {
+            return "";
+        }
+    }
+
+    private String extractText(InputStream inputStream) {
+        try (InputStream is = inputStream) {
+            XWPFDocument xwpf = new XWPFDocument(is);
             XWPFWordExtractor wordExtractor = new XWPFWordExtractor(xwpf);
             return wordExtractor.getText().trim();
         } catch (Exception e) {
@@ -25,5 +42,4 @@ public class DocumentExtractorImpl implements DocumentExtractor {
         }
         return "";
     }
-
 }

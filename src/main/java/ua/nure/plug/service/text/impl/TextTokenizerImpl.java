@@ -14,6 +14,8 @@ import java.util.regex.Pattern;
 public class TextTokenizerImpl implements TextTokenizer {
 
     private Pattern pattern = Pattern.compile("([а-яА-Яёєїі]+'*[а-яА-Яёєїі]+){2}");
+    private Pattern allWordsPattern = Pattern.compile("[а-яА-ЯёъїЇєЄіІ\\w]+");
+
 
     @Override
     public List<String> tokenizeWords(String text) {
@@ -35,4 +37,14 @@ public class TextTokenizerImpl implements TextTokenizer {
         return tokens;
     }
 
+    @Override
+    public List<String> tokenizeBySpace(String text) {
+        List<String> tokens = new ArrayList<>();
+        Matcher matcher = allWordsPattern.matcher(text);
+        while (matcher.find()) {
+            tokens.add(matcher.group());
+        }
+        return tokens;
+    }
+    
 }

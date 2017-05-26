@@ -4,14 +4,14 @@ import com.google.common.collect.Lists;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ua.nure.plug.model.Shingle;
 import ua.nure.plug.model.elastic.Document;
+import ua.nure.plug.model.elastic.MinHashDocument;
 import ua.nure.plug.model.elastic.ShingleDocument;
 import ua.nure.plug.model.elastic.Text;
 import ua.nure.plug.repository.elastic.DocumentRepository;
-import ua.nure.plug.service.DocumentService;
-import ua.nure.plug.service.HashService;
-import ua.nure.plug.service.ShingleDocumentService;
-import ua.nure.plug.service.TextService;
+import ua.nure.plug.service.*;
+import ua.nure.plug.service.minhash.MinHashService;
 import ua.nure.plug.service.normalization.NormalizationService;
 import ua.nure.plug.service.shingle.ShingleService;
 
@@ -31,7 +31,11 @@ public class DocumentServiceImpl implements DocumentService {
     @Autowired
     private ShingleDocumentService shingleDocumentService;
     @Autowired
+    private MinHashDocumentService minHashDocumentService;
+    @Autowired
     private NormalizationService normalizationService;
+    @Autowired
+    private MinHashService minHashService;
 
     @Override
     public Document getById(String id) {
@@ -46,6 +50,12 @@ public class DocumentServiceImpl implements DocumentService {
     @Override
     public Document createFrom(String filename, String text) {
         String documentId = hashService.md5(text);
+
+        if (documentRepository.findOne(documentId) != null) {
+            System.out.println("Found: " + documentId);
+            return documentRepository.findOne(documentId);
+        }
+
         Document document = new Document();
         document.setId(documentId);
         document.setFilename(filename);
@@ -53,7 +63,11 @@ public class DocumentServiceImpl implements DocumentService {
 
         String normalized = normalizationService.normalize(text);
         textService.create(new Text(documentId, text, normalized));
-        shingleDocumentService.create(new ShingleDocument(documentId, shingleService.createShingles(normalized)));
+
+        List<Shingle> shingles = shingleService.createShingles(normalized);
+        shingleDocumentService.create(new ShingleDocument(documentId, shingles));
+        List<Integer> minHashSignature = minHashService.createMinHashSignature(shingles);
+        minHashDocumentService.create(new MinHashDocument(documentId, minHashSignature));
 
         return documentRepository.save(document);
     }
@@ -78,6 +92,7 @@ public class DocumentServiceImpl implements DocumentService {
         documentRepository.deleteAll();
         textService.deleteAll();
         shingleDocumentService.deleteAll();
+        minHashDocumentService.deleteAll();
     }
 
 }

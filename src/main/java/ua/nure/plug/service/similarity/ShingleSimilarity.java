@@ -9,10 +9,26 @@ import ua.nure.plug.model.Sim;
 import ua.nure.plug.model.elastic.ShingleDocument;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class ShingleSimilarity implements DocumentSimilarity {
+
+    @Override
+    public double jaccard(ShingleDocument document, ShingleDocument document2) {
+        Set<Shingle> shingles1 = new HashSet<>(document.getShingles());
+        Set<Shingle> shingles2 = new HashSet<>(document2.getShingles());
+
+        Set<Shingle> intersection = new HashSet<>(shingles1);
+        intersection.retainAll(shingles2);
+
+        Set<Shingle> union = new HashSet<>(shingles1);
+        union.addAll(shingles2);
+
+        return 1.0 * intersection.size() / union.size();
+    }
 
     @Override
     public ComplexSim similarity(ShingleDocument document, List<ShingleDocument> documents) {
@@ -21,8 +37,11 @@ public class ShingleSimilarity implements DocumentSimilarity {
         List<Shingle> allShingles = new ArrayList<>();
 
         for (ShingleDocument document2 : documents) {
-            complexSim.addSim(similarity(document, document2));
-            allShingles.addAll(document2.getShingles());
+            Sim sim = similarity(document, document2);
+            if (sim.getCoefficient() != 0.0) {
+                complexSim.addSim(similarity(document, document2));
+                allShingles.addAll(document2.getShingles());
+            }
         }
 
         List<Shingle> intersection = new ArrayList<>(document.getShingles());

@@ -3,7 +3,6 @@ package ua.nure.plug.model.elastic;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
-import ua.nure.plug.model.Shingle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,19 +10,19 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@org.springframework.data.elasticsearch.annotations.Document(indexName = "plug", type = "shingle")
-public class ShingleDocument {
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "plug", type = "minhash")
+public class MinHashDocument {
 
     @Id
     private String id = UUID.randomUUID().toString();
     private String document;
-    private List<Shingle> shingles = new ArrayList<>();
+    private List<Integer> signature = new ArrayList<>();
 
-    public ShingleDocument() {}
+    public MinHashDocument() {}
 
-    public ShingleDocument(String document, List<Shingle> shingles) {
+    public MinHashDocument(String document, List<Integer> signature) {
         this.document = document;
-        this.shingles = shingles;
+        this.signature = signature;
     }
 
 }

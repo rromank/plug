@@ -40,6 +40,11 @@ public class ShingleDocumentServiceImpl implements ShingleDocumentService {
     }
 
     @Override
+    public List<ShingleDocument> getAll() {
+        return shingleDocumentRepository.findAll().getContent();
+    }
+
+    @Override
     public List<ShingleDocument> getByDocumentIdShingles(String documentId) {
         Client client = elasticsearchTemplate.getClient();
 

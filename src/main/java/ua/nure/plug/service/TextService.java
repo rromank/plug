@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface TextService {
 
+    List<Text> getAll();
+
     void create(Text text);
 
     void deleteByDocumentId(String documentId);
