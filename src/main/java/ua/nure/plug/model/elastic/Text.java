@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@Document(indexName = "plug", type = "word")
+@Document(indexName = "plug", type = "text")
 public class Text {
 
     @Id

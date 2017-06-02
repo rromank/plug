@@ -70,109 +70,96 @@ public class TestController {
         return String.valueOf(coef);
     }
 
-
     @RequestMapping(value = "/shingle/precision", method = RequestMethod.GET)
-    public String shinglesPrecision() {
-        Map<String, Double> precisionMap = new HashMap<>();
-        Map<String, Double> recallMap = new HashMap<>();
+    public String benchmarkShingle() {
+        long start = System.currentTimeMillis();
+        final double T = 0.9;
+        Set<Result> results = new HashSet<>();
 
-        List<ShingleDocument> shingleDocuments = shingleDocumentService.getAll();
-        for (ShingleDocument shingleDocument : shingleDocuments) {
+        int cos = 0;
+        int jac = 0;
+        int i = 0;
+        List<ShingleDocument> documents = shingleDocumentService.getAll();
+        for (ShingleDocument document1 : documents) {
+            System.out.println(i++);
+            String documentId1 = document1.getDocument();
+            for (ShingleDocument document2 : documents) {
+                String documentId2 = document2.getDocument();
+                if (documentId1.equals(documentId2)) {
+                    continue;
+                }
+                Result result = new Result(documentId1, documentId2);
+                if (results.contains(result)) {
+                    continue;
+                }
+                results.add(result);
 
-            int found = 0;
-            int cos = 0;
-            for (ShingleDocument shingleDocument2 : shingleDocuments) {
-                if (!shingleDocument.getDocument().equals(shingleDocument2.getDocument())) {
-                    double jaccard = shingleSimilarity.jaccard(shingleDocument, shingleDocument2);
-                    double cosin = cosineById(shingleDocument.getDocument(), shingleDocument2.getDocument());
-
-                    double t= 0.1;
-                    if (cosin >= t) {
-                        cos++;
-                    }
-                    if (jaccard >= t) {
-                        found++;
-                    }
-                    int inter = Math.min(found, cos);
-
-                    if (found != 0) {
-                        precisionMap.put(shingleDocument.getDocument(), 1.0 * inter / found);
-                    }
-                    if (cos != 0) {
-                        recallMap.put(shingleDocument.getDocument(), 1.0 * found / cos);
-                    }
+                if (cosineById(documentId1, documentId2) >= T) {
+                    cos++;
+                }
+                if (shingleSimilarity.jaccard(document1, document2) >= T) {
+                    jac++;
                 }
             }
         }
-        double precision = 0.0;
-        for (Map.Entry<String, Double> entry : precisionMap.entrySet()) {
-            precision += entry.getValue();
-        }
-        precision = precision / precisionMap.size();
 
-        double recall = 0.0;
-        for (Map.Entry<String, Double> entry : recallMap.entrySet()) {
-            recall += entry.getValue();
-        }
-        recall = recall / recallMap.size();
-
+        int inter = Math.min(jac, cos);
+        double precision = (1.0 * inter / jac);
+        double recall = (1.0 * inter / cos);
         double F = (2 * precision * recall) / (precision + recall);
+        System.out.println("Precision: " + precision + ", recall: " + recall + ", F: " + F);
+
+
+        long elapsed = System.currentTimeMillis() - start;
+        System.out.println("Elapsed time: " + elapsed + " ms.");
 
         return "Precision: " + precision + ", recall: " + recall + ", F: " + F;
     }
 
     @RequestMapping(value = "/minhash/precision", method = RequestMethod.GET)
     public String minhashPrecision() {
-        Map<String, Double> precisionMap = new HashMap<>();
-        Map<String, Double> recallMap = new HashMap<>();
+        final double T = 0.9;
+        Set<Result> results = new HashSet<>();
 
+        int cos = 0;
+        int jac = 0;
+        int i = 0;
         List<MinHashDocument> minHashDocuments = minHashDocumentService.getAll();
         for (MinHashDocument minHashDocument : minHashDocuments) {
-
-            int found = 0;
-            int cos = 0;
+            System.out.println(i++);
+            String documentId1 = minHashDocument.getDocument();
             for (MinHashDocument minHashDocument2 : minHashDocuments) {
-                if (!minHashDocument.getDocument().equals(minHashDocument2.getDocument())) {
-                    double jaccard = minHashSimilarity.similarity(minHashDocument, minHashDocument2);
-                    double cosin = cosineById(minHashDocument.getDocument(), minHashDocument2.getDocument());
+                String documentId2 = minHashDocument2.getDocument();
+                if (documentId1.equals(documentId2)) {
+                    continue;
+                }
+                Result result = new Result(documentId1, documentId2);
+                if (results.contains(result)) {
+                    continue;
+                }
+                results.add(result);
 
-                    double t= 0.2;
-                    if (cosin >= t) {
-                        cos++;
-                    }
-                    if (jaccard >= t) {
-                        found++;
-                    }
-                    int inter = Math.min(found, cos);
-
-                    if (found != 0) {
-                        precisionMap.put(minHashDocument.getDocument(), 1.0 * inter / found);
-                    }
-                    if (cos != 0) {
-                        recallMap.put(minHashDocument.getDocument(), 1.0 * found / cos);
-                    }
+                if (cosineById(documentId1, documentId2) >= T) {
+                    cos++;
+                }
+                if (minHashSimilarity.similarity(minHashDocument, minHashDocument2) >= T) {
+                    jac++;
                 }
             }
         }
-        double precision = 0.0;
-        for (Map.Entry<String, Double> entry : precisionMap.entrySet()) {
-            precision += entry.getValue();
-        }
-        precision = precision / precisionMap.size();
 
-        double recall = 0.0;
-        for (Map.Entry<String, Double> entry : recallMap.entrySet()) {
-            recall += entry.getValue();
-        }
-        recall = recall / recallMap.size();
-
+        int inter = Math.min(jac, cos);
+        double precision = (1.0 * inter / jac);
+        double recall = (1.0 * inter / cos);
         double F = (2 * precision * recall) / (precision + recall);
+        System.out.println("Precision: " + precision + ", recall: " + recall + ", F: " + F);
 
         return "Precision: " + precision + ", recall: " + recall + ", F: " + F;
     }
 
     @RequestMapping(value = "/imatch/precision", method = RequestMethod.GET)
     public String imatchPrecision() {
+        Set<Result> results = new HashSet<>();
         Map<String, Double> precisionMap = new HashMap<>();
         Map<String, Double> recallMap = new HashMap<>();
 
@@ -184,11 +171,18 @@ public class TestController {
             int found = 0;
             int cos = 0;
             for (Document document2 : documents) {
+                Result result = new Result(document.getId(), document2.getId());
+                if (results.contains(result)) {
+                    continue;
+                }
+                results.add(result);
+
+
                 if (!document.getId().equals(document2.getId())) {
                     double jaccard = iMatchService.similarity(document.getId(), document2.getId());
                     double cosin = cosineById(document.getId(), document2.getId());
 
-                    double t= 0.7;
+                    double t= 0.8;
                     if (cosin >= t) {
                         cos++;
                     }
@@ -201,12 +195,74 @@ public class TestController {
                         precisionMap.put(document.getId(), 1.0 * inter / found);
                     }
                     if (cos != 0) {
-                        recallMap.put(document.getId(), 1.0 * found / cos);
+                        recallMap.put(document.getId(), 1.0 * inter / cos);
                     }
                 }
             }
-            System.out.println(precisionMap.get(document.getId()));
-            System.out.println(recallMap.get(document.getId()));
+//            System.out.println(precisionMap.get(document.getId()));
+//            System.out.println(recallMap.get(document.getId()));
+        }
+        double precision = 0.0;
+        for (Map.Entry<String, Double> entry : precisionMap.entrySet()) {
+            precision += entry.getValue();
+        }
+        precision = precision / precisionMap.size();
+
+        double recall = 0.0;
+        for (Map.Entry<String, Double> entry : recallMap.entrySet()) {
+            recall += entry.getValue();
+        }
+        recall = recall / recallMap.size();
+
+        double F = (2 * precision * recall) / (precision + recall);
+
+        return "Precision: " + precision + ", recall: " + recall + ", F: " + F;
+    }
+
+    @RequestMapping(value = "/imatch/multi-precision", method = RequestMethod.GET)
+    public String imatchMultiPrecision() {
+        Set<Result> results = new HashSet<>();
+        Map<String, Double> precisionMap = new HashMap<>();
+        Map<String, Double> recallMap = new HashMap<>();
+
+        int i = -1;
+        List<Document> documents = documentService.getAll();
+        for (Document document : documents) {
+            i++;
+            System.out.println(i);
+            int duplicateCount = 0;
+            int foundCount = 0;
+            for (Document document2 : documents) {
+                if (document.getId().equals(document2.getId())) {
+                    continue;
+                }
+                Result result = new Result(document.getId(), document2.getId());
+                if (results.contains(result)) {
+                    continue;
+                }
+                results.add(result);
+
+
+                double cosin = cosineById(document.getId(), document2.getId());
+                double jaccard = iMatchService.similarityMulti(document.getId(), document2.getId());
+
+                double t= 0.9;
+                if (cosin >= t) {
+                    duplicateCount++;
+                }
+                if (jaccard >= t) {
+                    foundCount++;
+                }
+            }
+
+            int intersection = Math.min(foundCount, duplicateCount);
+            if (duplicateCount != 0) {
+                recallMap.put(document.getId(), 1.0 * intersection / duplicateCount);
+            }
+            if (foundCount != 0) {
+                precisionMap.put(document.getId(), 1.0 * intersection / foundCount);
+            }
+
         }
         double precision = 0.0;
         for (Map.Entry<String, Double> entry : precisionMap.entrySet()) {
@@ -355,6 +411,36 @@ public class TestController {
 
     }
 
+    private class Result {
+        private Set<String> documents = new TreeSet<>();
 
+        public Result(String document1, String document2) {
+            documents.add(document1);
+            documents.add(document2);
+        }
+
+        public void addDocument(String document) {
+            documents.add(document);
+        }
+
+        public String getDocuments() {
+            return documents.stream()
+                    .collect(Collectors.joining("#"));
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Result result = (Result) o;
+
+            return result.getDocuments().equals(getDocuments());
+        }
+
+        @Override
+        public int hashCode() {
+            return getDocuments().hashCode();
+        }
+    }
 
 }
